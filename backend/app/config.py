@@ -26,6 +26,20 @@ PRODUCTION_ENVIRONMENT = "production"
 OPENAI_MODEL = "gpt-4o"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 LLM_TEMPERATURE = 0.2
+MESSAGE_DIRECTION_INBOUND = "inbound"
+MESSAGE_DIRECTION_OUTBOUND = "outbound"
+THREAD_STATUS_PENDING = "pending"
+THREAD_STATUS_OUTREACH_SENT = "outreach_sent"
+THREAD_STATUS_NEGOTIATING = "negotiating"
+THREAD_STATUS_SLOT_PROPOSED = "slot_proposed"
+THREAD_STATUS_BOOKED = "booked"
+THREAD_STATUS_CLOSED_NO_FIT = "closed_no_fit"
+THREAD_STATUS_CLOSED_NO_REPLY = "closed_no_reply"
+BOOKING_STATUS_CONFIRMED = "confirmed"
+BOOKING_STATUS_CANCELLED = "cancelled"
+BOOKING_STATUS_RESCHEDULED = "rescheduled"
+DEFAULT_REPLY_SUBJECT = "Opportunity follow-up"
+DEFAULT_SLOT_COUNT = 3
 
 
 class Settings(BaseSettings):
