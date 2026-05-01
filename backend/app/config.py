@@ -23,6 +23,9 @@ DEFAULT_API_HOST = "0.0.0.0"
 DEFAULT_API_PORT = 8000
 DEFAULT_CORS_ORIGINS = ["http://localhost:5173"]
 PRODUCTION_ENVIRONMENT = "production"
+OPENAI_MODEL = "gpt-4o"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+LLM_TEMPERATURE = 0.2
 
 
 class Settings(BaseSettings):
