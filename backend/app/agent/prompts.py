@@ -45,7 +45,13 @@ def build_system_prompt(
         build_thread_history(history),
         "",
         "Based on the latest message, choose exactly ONE tool to call.",
-        "Respond ONLY with a valid JSON tool call object. No extra text.",
+        "Respond ONLY with a single valid JSON object. No markdown, no code fences, no extra text.",
+        "",
+        "The JSON must use the key 'name' as the discriminator. Valid shapes:",
+        '{"name":"send_email","subject":"<string>","body":"<string>"}',
+        '{"name":"propose_calendar_slot","body":"<string>","slots":["<ISO datetime>","..."]}',
+        '{"name":"walk_away","body":"<string>"}',
+        '{"name":"reschedule","body":"<string>","cancelled_slot":"<ISO datetime>","new_slots":["<ISO datetime>","..."]}',
     ]
     return "\n".join(sections)
 
