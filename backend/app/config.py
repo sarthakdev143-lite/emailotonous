@@ -5,9 +5,10 @@ from __future__ import annotations
 import logging
 from functools import lru_cache
 from secrets import token_urlsafe
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 LOGGER = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ class Settings(BaseSettings):
     company_name: str = Field(default=DEFAULT_COMPANY_NAME, alias="COMPANY_NAME")
     api_host: str = Field(default=DEFAULT_API_HOST, alias="API_HOST")
     api_port: int = Field(default=DEFAULT_API_PORT, alias="API_PORT")
-    cors_origins: list[str] = Field(
+    cors_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: list(DEFAULT_CORS_ORIGINS), alias="CORS_ORIGINS"
     )
 
@@ -103,7 +104,7 @@ class Settings(BaseSettings):
     @property
     def llm_available(self) -> bool:
         """Return whether a server-side LLM provider is available."""
-        return self.openai_api_key is not None or self.groq_api_key is not None
+        return bool(self.openai_api_key or self.groq_api_key)
 
 
 @lru_cache
