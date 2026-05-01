@@ -96,6 +96,7 @@ async def list_threads(session: AsyncSession) -> list[ThreadSummary]:
         select(Thread)
         .options(selectinload(Thread.messages), selectinload(Thread.bookings))
         .order_by(Thread.updated_at.desc())
+        .execution_options(populate_existing=True)
     )
     return [_serialize_thread_summary(thread) for thread in result.scalars().all()]
 
@@ -110,8 +111,9 @@ async def run_agent_turn(
 ) -> ThreadDetail:
     """Execute one perceive, reason, act cycle for a thread."""
     thread = await _get_thread(session, thread_id)
-    latest_inbound = _latest_inbound_message(thread.messages)
-    history_bodies = [message.body for message in thread.messages[:-1]] if latest_inbound else [message.body for message in thread.messages]
+    ordered_messages = sorted(thread.messages, key=lambda item: item.timestamp)
+    latest_inbound = _latest_inbound_message(ordered_messages)
+    history_bodies = [message.body for message in ordered_messages if message is not latest_inbound]
     intent = Intent.INITIAL if latest_inbound is None else await classify_intent(latest_inbound.body, history_bodies)
 
     if llm_response_override is None:
@@ -136,13 +138,14 @@ async def run_agent_turn(
 
 async def _complete_agent_turn(thread: Thread) -> str:
     """Request a tool call from the configured server-side LLM."""
-    history_entries = [message.body for message in thread.messages]
+    ordered_messages = sorted(thread.messages, key=lambda item: item.timestamp)
+    history_entries = [message.body for message in ordered_messages]
     conversation = [
         {
             "role": "assistant" if message.direction == MESSAGE_DIRECTION_OUTBOUND else "user",
             "content": message.body,
         }
-        for message in thread.messages
+        for message in ordered_messages
     ]
     return await complete(
         messages=conversation,
@@ -226,7 +229,7 @@ def _derive_subject(messages: list[Message], action: Any) -> str:
     """Determine the subject line for an outbound reply."""
     if hasattr(action, "subject"):
         return str(action.subject)
-    for message in reversed(messages):
+    for message in reversed(sorted(messages, key=lambda item: item.timestamp)):
         if message.subject:
             return message.subject
     return DEFAULT_REPLY_SUBJECT
@@ -279,6 +282,7 @@ async def _get_thread(session: AsyncSession, thread_id: str) -> Thread:
         select(Thread)
         .where(Thread.id == thread_id)
         .options(selectinload(Thread.messages), selectinload(Thread.bookings))
+        .execution_options(populate_existing=True)
     )
     thread = result.scalar_one_or_none()
     if thread is None:
@@ -297,7 +301,9 @@ async def _message_bodies_for_thread(session: AsyncSession, thread_id: str) -> l
 def _latest_inbound_message(messages: list[Message]) -> Message | None:
     """Return the latest inbound message in a thread."""
     inbound_messages = [message for message in messages if message.direction == MESSAGE_DIRECTION_INBOUND]
-    return inbound_messages[-1] if inbound_messages else None
+    if not inbound_messages:
+        return None
+    return max(inbound_messages, key=lambda item: item.timestamp)
 
 
 def _serialize_thread(thread: Thread) -> ThreadDetail:
