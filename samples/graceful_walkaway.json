@@ -1,0 +1,32 @@
+[
+  {
+    "direction": "outbound",
+    "body": "Hi Elena — I’m reaching out about a short-form email and onboarding sprint for a consumer app. Your conversion work stood out, and I’d love to see if there’s a fit.",
+    "intent": null,
+    "timestamp": "2026-05-01T08:30:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Appreciate it. What budget are you working with for the sprint?",
+    "intent": "curious",
+    "timestamp": "2026-05-01T08:47:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "We can go up to $5,000 depending on fit and timeline. If that range is workable, I can send over a few times to connect.",
+    "intent": null,
+    "timestamp": "2026-05-01T08:54:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Thanks for clarifying. I wouldn’t be able to take this on for under $7,500.",
+    "intent": "negotiating",
+    "timestamp": "2026-05-01T09:08:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Thanks for being direct. I don’t want to waste your time if the budget isn’t aligned, but I’d be glad to keep you in mind for future work that lands closer to your range.",
+    "intent": null,
+    "timestamp": "2026-05-01T09:12:00Z"
+  }
+]
