@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from functools import lru_cache
+from pathlib import Path
 from secrets import token_urlsafe
 from typing import Annotated
 
@@ -43,10 +44,23 @@ DEFAULT_REPLY_SUBJECT = "Opportunity follow-up"
 DEFAULT_SLOT_COUNT = 3
 
 
+def _resolve_env_files() -> tuple[str, ...] | None:
+    """Load backend .env first, then frontend .env as a fallback."""
+    workspace_root = Path(__file__).resolve().parents[2]
+    env_files = [
+        workspace_root / "backend" / ".env",
+        workspace_root / "frontend" / ".env",
+    ]
+    resolved = tuple(str(path) for path in env_files if path.exists())
+    return resolved or None
+
+
 class Settings(BaseSettings):
     """Typed application settings loaded from the environment."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=_resolve_env_files(), env_file_encoding="utf-8", extra="ignore"
+    )
 
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     groq_api_key: str | None = Field(default=None, alias="GROQ_API_KEY")

@@ -16,6 +16,20 @@ interface ThreadFormState {
   availableSlots: string;
 }
 
+function getApiErrorMessage(error: unknown, fallbackMessage: string): string {
+  if (typeof error !== "object" || error === null || !("response" in error)) {
+    return fallbackMessage;
+  }
+  const response = (error as { response?: { data?: unknown } }).response;
+  if (!response || typeof response.data !== "object" || response.data === null) {
+    return fallbackMessage;
+  }
+  if ("detail" in response.data && typeof response.data.detail === "string") {
+    return response.data.detail;
+  }
+  return fallbackMessage;
+}
+
 const INITIAL_FORM_STATE: ThreadFormState = {
   prospectEmail: "",
   prospectName: "",
@@ -142,7 +156,12 @@ export default function App() {
       });
       await refreshThreads(selectedThreadId);
     } catch (requestError) {
-      setDetailError("The backend couldn't run a server-side agent turn for this thread.");
+      setDetailError(
+        getApiErrorMessage(
+          requestError,
+          "The backend couldn't run a server-side agent turn for this thread.",
+        ),
+      );
     } finally {
       setTriggerLoading(false);
     }

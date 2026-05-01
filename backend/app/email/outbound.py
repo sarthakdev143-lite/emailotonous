@@ -5,11 +5,13 @@ from __future__ import annotations
 import asyncio
 import logging
 from typing import Protocol
+from uuid import uuid4
 
 import requests
 import resend
+from resend.exceptions import ResendError
 
-from app.config import get_settings
+from app.config import PRODUCTION_ENVIRONMENT, get_settings
 
 LOGGER = logging.getLogger(__name__)
 
@@ -46,6 +48,11 @@ class ResendEmailSender:
         """Send a plain-text outbound email."""
         settings = get_settings()
         if not settings.resend_api_key:
+            if settings.app_env != PRODUCTION_ENVIRONMENT:
+                LOGGER.warning(
+                    "RESEND_API_KEY is missing; returning a development mock message id."
+                )
+                return f"dev-unsent-{uuid4()}"
             raise EmailDeliveryError("RESEND_API_KEY is required for outbound email delivery.")
 
         resend.api_key = settings.resend_api_key
@@ -61,8 +68,13 @@ class ResendEmailSender:
 
         try:
             response = await asyncio.to_thread(resend.Emails.send, payload)
-        except requests.RequestException as error:
+        except (requests.RequestException, ResendError) as error:
             LOGGER.error("Resend email delivery failed.", exc_info=error)
-            raise EmailDeliveryError("Resend email delivery failed.") from error
+            if settings.app_env != PRODUCTION_ENVIRONMENT:
+                LOGGER.warning(
+                    "Email send failed in development; returning a mock message id instead."
+                )
+                return f"dev-unsent-{uuid4()}"
+            raise EmailDeliveryError(f"Resend email delivery failed: {error}") from error
 
         return response["id"]
