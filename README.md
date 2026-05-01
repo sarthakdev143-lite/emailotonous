@@ -10,7 +10,7 @@ flowchart LR
   Dashboard -->|GET/POST /api/threads| FastAPI
   Dashboard -->|POST /api/agent/trigger| FastAPI
   Dashboard -->|POST /api/agent/process-puter| FastAPI
-  Dashboard -->|puter.ai.chat()| Puter[Puter.js]
+  Dashboard -->|puter.ai.chat| Puter[Puter.js]
   FastAPI --> Agent[Agent Core]
   Agent --> Intent[Intent Classifier]
   Agent --> LLM[OpenAI or Groq]
