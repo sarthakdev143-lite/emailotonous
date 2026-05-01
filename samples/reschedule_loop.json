@@ -1,0 +1,80 @@
+[
+  {
+    "direction": "outbound",
+    "body": "Hi Jordan — I’m hiring for a six-week launch sprint and wanted to see if you’d be open to a quick intro call.",
+    "intent": null,
+    "timestamp": "2026-05-01T09:00:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Yes, happy to chat. Send over a few options and I’ll grab one.",
+    "intent": "interested",
+    "timestamp": "2026-05-01T09:12:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Great. I can do May 5 at 10:00, May 5 at 14:00, or May 6 at 11:00.",
+    "intent": null,
+    "timestamp": "2026-05-01T09:16:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Let’s go with May 5 at 10:00.",
+    "intent": "interested",
+    "timestamp": "2026-05-01T09:21:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Locked in. I’ve got you down for May 5 at 10:00.",
+    "intent": null,
+    "timestamp": "2026-05-01T09:24:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "I need to reschedule that hold. Could we move it?",
+    "intent": "cancellation",
+    "timestamp": "2026-05-02T07:10:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Absolutely. I can do May 8 at 10:00, May 8 at 14:00, or May 9 at 11:00.",
+    "intent": null,
+    "timestamp": "2026-05-02T07:18:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "May 8 at 10:00 works.",
+    "intent": "interested",
+    "timestamp": "2026-05-02T07:24:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Perfect. You’re moved to May 8 at 10:00.",
+    "intent": null,
+    "timestamp": "2026-05-02T07:27:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Sorry again — one more change on my side. Can we shift that call?",
+    "intent": "cancellation",
+    "timestamp": "2026-05-04T12:06:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "No problem. Fresh options: May 9 at 10:00, May 9 at 14:00, or May 10 at 11:00.",
+    "intent": null,
+    "timestamp": "2026-05-04T12:14:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Let’s do May 9 at 10:00 this time.",
+    "intent": "interested",
+    "timestamp": "2026-05-04T12:22:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Done — May 9 at 10:00 is locked in.",
+    "intent": null,
+    "timestamp": "2026-05-04T12:25:00Z"
+  }
+]
