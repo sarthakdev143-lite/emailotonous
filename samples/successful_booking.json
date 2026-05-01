@@ -1,0 +1,44 @@
+[
+  {
+    "direction": "outbound",
+    "body": "Hi Maya — I’m reaching out about a three-week lifecycle email sprint for a fintech launch. Your recent campaign work felt like a strong match, and I’d love to compare notes if you’re open to a quick call this week.",
+    "intent": null,
+    "timestamp": "2026-05-01T10:00:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Thanks, this sounds interesting. Before we book time, what budget range are you working with?",
+    "intent": "curious",
+    "timestamp": "2026-05-01T11:13:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "We’ve got room up to $5,000 for the sprint depending on fit and turnaround. If that’s in range for you, I can send a few call windows today.",
+    "intent": null,
+    "timestamp": "2026-05-01T11:20:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "That works on my side. I’m usually around $4,800 for something like this, so feel free to send times.",
+    "intent": "negotiating",
+    "timestamp": "2026-05-01T11:34:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Perfect. I can do Tuesday at 10:00, Tuesday at 14:00, or Wednesday at 11:00. If one of those works, I’ll lock it in right away.",
+    "intent": null,
+    "timestamp": "2026-05-01T11:41:00Z"
+  },
+  {
+    "direction": "inbound",
+    "body": "Tuesday at 14:00 works for me.",
+    "intent": "interested",
+    "timestamp": "2026-05-01T11:52:00Z"
+  },
+  {
+    "direction": "outbound",
+    "body": "Great — I’ve locked in Tuesday at 14:00 and sent over the hold. Looking forward to meeting you then.",
+    "intent": null,
+    "timestamp": "2026-05-01T11:55:00Z"
+  }
+]
