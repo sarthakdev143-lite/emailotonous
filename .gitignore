@@ -9,7 +9,6 @@ backend/.mypy_cache/
 backend/htmlcov/
 backend/.coverage
 backend/agent.db
-backend/alembic.ini
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
