@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260501_0001"
 down_revision = None
@@ -39,7 +40,9 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["thread_id"], ["threads.id"]),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_messages_email_message_id"), "messages", ["email_message_id"], unique=False)
+    op.create_index(
+        op.f("ix_messages_email_message_id"), "messages", ["email_message_id"], unique=False
+    )
     op.create_index(op.f("ix_messages_thread_id"), "messages", ["thread_id"], unique=False)
 
     op.create_table(

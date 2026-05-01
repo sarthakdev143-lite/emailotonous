@@ -26,7 +26,9 @@ async def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncClient
     await init_database()
 
     app = create_app()
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as test_client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as test_client:
         yield test_client
 
     await dispose_database()
@@ -99,7 +101,10 @@ async def test_list_threads_route_returns_created_threads(client: AsyncClient) -
 
     assert response.status_code == 200
     assert len(payload) == 2
-    assert {thread["prospect_email"] for thread in payload} == {"first@example.com", "second@example.com"}
+    assert {thread["prospect_email"] for thread in payload} == {
+        "first@example.com",
+        "second@example.com",
+    }
 
 
 @pytest.mark.asyncio
@@ -108,6 +113,7 @@ async def test_process_puter_route_executes_action_without_server_llm(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The Puter route should persist the action layer response directly."""
+
     async def fake_send_email(
         self: object,
         *,

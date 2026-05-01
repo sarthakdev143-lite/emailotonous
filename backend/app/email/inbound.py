@@ -5,11 +5,12 @@ from __future__ import annotations
 import asyncio
 import imaplib
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from email import message_from_bytes
 from email.message import EmailMessage, Message
 from email.policy import default as default_email_policy
-from typing import Any, Callable
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -43,7 +44,9 @@ class ThreadCandidate:
 class IMAPPoller:
     """Poll an IMAP inbox and route replies into existing threads."""
 
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession] | Callable[[], Any]) -> None:
+    def __init__(
+        self, session_factory: async_sessionmaker[AsyncSession] | Callable[[], Any]
+    ) -> None:
         self.session_factory = session_factory
 
     def match_thread(
@@ -70,7 +73,10 @@ class IMAPPoller:
                     return candidate.thread_id
 
         for candidate in candidates:
-            if self._normalize_subject(candidate.subject) == normalized_subject and normalized_subject:
+            if (
+                self._normalize_subject(candidate.subject) == normalized_subject
+                and normalized_subject
+            ):
                 return candidate.thread_id
 
         for candidate in candidates:
@@ -116,7 +122,10 @@ class IMAPPoller:
             email_message = message_from_bytes(raw_message, policy=default_email_policy)
             thread_id = self.match_thread(email_message, candidates)
             if thread_id is None:
-                LOGGER.info("Ignoring unmatched inbound email with subject '%s'.", email_message.get("Subject"))
+                LOGGER.info(
+                    "Ignoring unmatched inbound email with subject '%s'.",
+                    email_message.get("Subject"),
+                )
                 continue
             await self.process_new_email(raw_message, thread_id)
             processed_count += 1
@@ -127,7 +136,9 @@ class IMAPPoller:
         result = await session.execute(
             select(Thread)
             .options(selectinload(Thread.messages))
-            .where(Thread.status.not_in((THREAD_STATUS_CLOSED_NO_FIT, THREAD_STATUS_CLOSED_NO_REPLY)))
+            .where(
+                Thread.status.not_in((THREAD_STATUS_CLOSED_NO_FIT, THREAD_STATUS_CLOSED_NO_REPLY))
+            )
         )
         threads = result.scalars().all()
         return [
@@ -136,7 +147,11 @@ class IMAPPoller:
                 prospect_email=thread.prospect_email,
                 subject=self._latest_subject(thread.messages),
                 status=thread.status,
-                message_ids=[message.email_message_id for message in thread.messages if message.email_message_id],
+                message_ids=[
+                    message.email_message_id
+                    for message in thread.messages
+                    if message.email_message_id
+                ],
             )
             for thread in threads
         ]
@@ -166,7 +181,9 @@ class IMAPPoller:
     def _extract_sender_email(raw_from_header: str) -> str:
         """Extract a lowercase sender address from a From header."""
         if "<" in raw_from_header and ">" in raw_from_header:
-            return raw_from_header.split("<", maxsplit=1)[1].split(">", maxsplit=1)[0].strip().lower()
+            return (
+                raw_from_header.split("<", maxsplit=1)[1].split(">", maxsplit=1)[0].strip().lower()
+            )
         return raw_from_header.strip().lower()
 
     @staticmethod
@@ -204,6 +221,8 @@ class IMAPPoller:
                     return payload.decode(charset, errors="replace")
         if isinstance(email_message, EmailMessage):
             content = email_message.get_content()
-            return content if isinstance(content, str) else content.decode("utf-8", errors="replace")
+            return (
+                content if isinstance(content, str) else content.decode("utf-8", errors="replace")
+            )
         payload = email_message.get_payload(decode=True) or b""
         return payload.decode("utf-8", errors="replace")

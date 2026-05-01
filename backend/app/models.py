@@ -1,7 +1,7 @@
 """SQLAlchemy ORM models for threads, messages, and bookings."""
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -12,7 +12,7 @@ from app.database import Base
 
 def utc_now() -> datetime:
     """Return the current UTC timestamp."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Thread(Base):
@@ -22,10 +22,12 @@ class Thread(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     prospect_email: Mapped[str] = mapped_column(String(320), nullable=False, index=True)
-    prospect_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    prospect_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(64), nullable=False, default="pending")
-    config: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    config: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, nullable=False
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=utc_now,
@@ -33,8 +35,12 @@ class Thread(Base):
         nullable=False,
     )
 
-    messages: Mapped[List["Message"]] = relationship(back_populates="thread", cascade="all, delete-orphan")
-    bookings: Mapped[List["Booking"]] = relationship(back_populates="thread", cascade="all, delete-orphan")
+    messages: Mapped[list["Message"]] = relationship(
+        back_populates="thread", cascade="all, delete-orphan"
+    )
+    bookings: Mapped[list["Booking"]] = relationship(
+        back_populates="thread", cascade="all, delete-orphan"
+    )
 
 
 class Message(Base):
@@ -45,11 +51,13 @@ class Message(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     thread_id: Mapped[str] = mapped_column(ForeignKey("threads.id"), nullable=False, index=True)
     direction: Mapped[str] = mapped_column(String(16), nullable=False)
-    subject: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    subject: Mapped[str | None] = mapped_column(String(255), nullable=True)
     body: Mapped[str] = mapped_column(Text, nullable=False)
-    email_message_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
-    intent: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    email_message_id: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
+    intent: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    timestamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, nullable=False
+    )
 
     thread: Mapped[Thread] = relationship(back_populates="messages")
 
@@ -63,7 +71,9 @@ class Booking(Base):
     thread_id: Mapped[str] = mapped_column(ForeignKey("threads.id"), nullable=False, index=True)
     slot: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="confirmed")
-    cal_event_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    cal_event_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, nullable=False
+    )
 
     thread: Mapped[Thread] = relationship(back_populates="bookings")

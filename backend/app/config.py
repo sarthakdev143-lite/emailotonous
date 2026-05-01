@@ -66,7 +66,9 @@ class Settings(BaseSettings):
     company_name: str = Field(default=DEFAULT_COMPANY_NAME, alias="COMPANY_NAME")
     api_host: str = Field(default=DEFAULT_API_HOST, alias="API_HOST")
     api_port: int = Field(default=DEFAULT_API_PORT, alias="API_PORT")
-    cors_origins: list[str] = Field(default_factory=lambda: list(DEFAULT_CORS_ORIGINS), alias="CORS_ORIGINS")
+    cors_origins: list[str] = Field(
+        default_factory=lambda: list(DEFAULT_CORS_ORIGINS), alias="CORS_ORIGINS"
+    )
 
     @field_validator("debug", mode="before")
     @classmethod

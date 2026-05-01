@@ -38,7 +38,14 @@ from app.config import (
 from app.email.outbound import ResendEmailSender, SupportsEmailSending
 from app.llm_client import complete
 from app.models import Booking, Message, Thread
-from app.schemas import BookingRead, MessageRead, ThreadConfig, ThreadCreate, ThreadDetail, ThreadSummary
+from app.schemas import (
+    BookingRead,
+    MessageRead,
+    ThreadConfig,
+    ThreadCreate,
+    ThreadDetail,
+    ThreadSummary,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -114,7 +121,11 @@ async def run_agent_turn(
     ordered_messages = sorted(thread.messages, key=lambda item: item.timestamp)
     latest_inbound = _latest_inbound_message(ordered_messages)
     history_bodies = [message.body for message in ordered_messages if message is not latest_inbound]
-    intent = Intent.INITIAL if latest_inbound is None else await classify_intent(latest_inbound.body, history_bodies)
+    intent = (
+        Intent.INITIAL
+        if latest_inbound is None
+        else await classify_intent(latest_inbound.body, history_bodies)
+    )
 
     if llm_response_override is None:
         llm_response_override = await _complete_agent_turn(thread)
@@ -180,9 +191,14 @@ async def _execute_action(
         await _send_outbound_message(session, thread, subject, action.body, reply_to, email_sender)
         thread.status = THREAD_STATUS_CLOSED_NO_FIT
     else:
-        await _send_outbound_message(session, thread, action.subject, action.body, reply_to, email_sender)
+        await _send_outbound_message(
+            session, thread, action.subject, action.body, reply_to, email_sender
+        )
         if _should_confirm_booking(thread.status, latest_inbound):
-            slot = _pick_booking_slot(thread.config.get("available_slots", []), latest_inbound.body if latest_inbound else "")
+            slot = _pick_booking_slot(
+                thread.config.get("available_slots", []),
+                latest_inbound.body if latest_inbound else "",
+            )
             await calendar_service.book_slot(thread.id, slot)
             thread.status = THREAD_STATUS_BOOKED
         elif thread.status == THREAD_STATUS_PENDING:
@@ -240,7 +256,10 @@ def _should_confirm_booking(current_status: str, latest_inbound: Message | None)
     if current_status != THREAD_STATUS_SLOT_PROPOSED or latest_inbound is None:
         return False
     normalized = latest_inbound.body.lower()
-    return any(token in normalized for token in ("works", "confirmed", "book it", "sounds good", "let's do"))
+    return any(
+        token in normalized
+        for token in ("works", "confirmed", "book it", "sounds good", "let's do")
+    )
 
 
 def _pick_booking_slot(slots: list[Any], latest_body: str) -> str:
@@ -255,14 +274,20 @@ def _pick_booking_slot(slots: list[Any], latest_body: str) -> str:
         weekday = slot_time.strftime("%A").lower()
         hour = slot_time.strftime("%H:%M").lower()
         hour_short = str(int(slot_time.strftime("%H")))
-        if weekday in normalized_body and (hour in normalized_body or hour_short in normalized_body):
+        if weekday in normalized_body and (
+            hour in normalized_body or hour_short in normalized_body
+        ):
             return slot
     if not slots:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="No available slots to book.")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="No available slots to book."
+        )
     return str(slots[0])
 
 
-async def _mark_latest_booking_rescheduled(session: AsyncSession, thread_id: str, cancelled_slot: str) -> None:
+async def _mark_latest_booking_rescheduled(
+    session: AsyncSession, thread_id: str, cancelled_slot: str
+) -> None:
     """Mark the matching booking as rescheduled."""
     result = await session.execute(
         select(Booking)
@@ -300,7 +325,9 @@ async def _message_bodies_for_thread(session: AsyncSession, thread_id: str) -> l
 
 def _latest_inbound_message(messages: list[Message]) -> Message | None:
     """Return the latest inbound message in a thread."""
-    inbound_messages = [message for message in messages if message.direction == MESSAGE_DIRECTION_INBOUND]
+    inbound_messages = [
+        message for message in messages if message.direction == MESSAGE_DIRECTION_INBOUND
+    ]
     if not inbound_messages:
         return None
     return max(inbound_messages, key=lambda item: item.timestamp)

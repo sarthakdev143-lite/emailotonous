@@ -31,7 +31,10 @@ KEYWORD_INTENTS: tuple[tuple[Intent, tuple[str, ...]], ...] = (
     (Intent.DECLINING, ("pass", "not interested", "decline", "can't do it", "no thanks")),
     (Intent.NEGOTIATING, ("rate", "budget", "minimum", "$", "compensation", "worth my time")),
     (Intent.CURIOUS, ("what", "scope", "team", "details", "more about", "company")),
-    (Intent.INTERESTED, ("interesting", "interested", "love to learn", "sounds good", "open to it")),
+    (
+        Intent.INTERESTED,
+        ("interesting", "interested", "love to learn", "sounds good", "open to it"),
+    ),
 )
 
 
@@ -49,14 +52,21 @@ async def classify_intent(message_body: str | None, history: Sequence[str] | Non
     if settings.llm_available:
         try:
             raw_result = await complete(
-                messages=[{"role": "user", "content": build_intent_user_prompt(normalized_body, prior_history)}],
+                messages=[
+                    {
+                        "role": "user",
+                        "content": build_intent_user_prompt(normalized_body, prior_history),
+                    }
+                ],
                 system=build_intent_system_prompt(),
             )
             normalized_result = _normalize_intent_label(raw_result)
             if normalized_result is not None:
                 return normalized_result
         except LLMUnavailableError:
-            LOGGER.info("Intent classification fell back to keywords because no server LLM was available.")
+            LOGGER.info(
+                "Intent classification fell back to keywords because no server LLM was available."
+            )
 
     return _classify_from_keywords(normalized_body)
 

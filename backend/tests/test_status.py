@@ -7,7 +7,9 @@ from httpx import ASGITransport, AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_status_reports_puter_mode_when_no_server_llm_keys(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_status_reports_puter_mode_when_no_server_llm_keys(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Return the Puter fallback status when no server-side keys are configured."""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
@@ -18,7 +20,9 @@ async def test_status_reports_puter_mode_when_no_server_llm_keys(monkeypatch: py
     get_settings.cache_clear()
     app = create_app()
 
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as client:
         response = await client.get("/api/status")
 
     payload = response.json()
@@ -45,7 +49,9 @@ async def test_status_reports_openai_when_openai_key_is_available(
     get_settings.cache_clear()
     app = create_app()
 
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as client:
         response = await client.get("/api/status")
 
     payload = response.json()

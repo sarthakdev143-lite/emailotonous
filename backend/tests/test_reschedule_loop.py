@@ -16,7 +16,9 @@ class FakeEmailSender:
     def __init__(self) -> None:
         self.messages: list[str] = []
 
-    async def send_email(self, *, to_email: str, subject: str, body: str, reply_to: str | None = None) -> str:
+    async def send_email(
+        self, *, to_email: str, subject: str, body: str, reply_to: str | None = None
+    ) -> str:
         """Record the email body and return a synthetic id."""
         self.messages.append(body)
         return f"loop-message-{len(self.messages)}"
@@ -26,7 +28,12 @@ class FakeEmailSender:
 async def db_session(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncSession:
     """Create an isolated database for the reschedule loop."""
     from app.config import get_settings
-    from app.database import dispose_database, get_session_maker, init_database, reset_database_state
+    from app.database import (
+        dispose_database,
+        get_session_maker,
+        init_database,
+        reset_database_state,
+    )
 
     database_path = tmp_path / "reschedule-loop.db"
     monkeypatch.setenv("DATABASE_URL", f"sqlite+aiosqlite:///{database_path.resolve().as_posix()}")

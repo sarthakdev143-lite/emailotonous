@@ -23,12 +23,16 @@ async def complete(messages: list[dict[str, str]], system: str) -> str:
         try:
             return await _openai_complete(messages=messages, system=system)
         except OpenAIError as error:
-            LOGGER.warning("OpenAI completion failed; falling back to Groq if available.", exc_info=error)
+            LOGGER.warning(
+                "OpenAI completion failed; falling back to Groq if available.", exc_info=error
+            )
     if settings.groq_api_key:
         try:
             return await _groq_complete(messages=messages, system=system)
         except GroqError as error:
-            LOGGER.warning("Groq completion failed; no more server-side fallbacks remain.", exc_info=error)
+            LOGGER.warning(
+                "Groq completion failed; no more server-side fallbacks remain.", exc_info=error
+            )
     raise LLMUnavailableError("No API keys configured — use Puter.js fallback")
 
 

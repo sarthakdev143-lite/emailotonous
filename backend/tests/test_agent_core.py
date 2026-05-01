@@ -16,7 +16,9 @@ class FakeEmailSender:
     def __init__(self) -> None:
         self.messages: list[dict[str, str | None]] = []
 
-    async def send_email(self, *, to_email: str, subject: str, body: str, reply_to: str | None = None) -> str:
+    async def send_email(
+        self, *, to_email: str, subject: str, body: str, reply_to: str | None = None
+    ) -> str:
         """Record the outbound email and return a synthetic message id."""
         self.messages.append(
             {
@@ -33,7 +35,12 @@ class FakeEmailSender:
 async def db_session(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AsyncSession:
     """Create an isolated async database session."""
     from app.config import get_settings
-    from app.database import dispose_database, get_session_maker, init_database, reset_database_state
+    from app.database import (
+        dispose_database,
+        get_session_maker,
+        init_database,
+        reset_database_state,
+    )
 
     database_path = tmp_path / "agent-core.db"
     monkeypatch.setenv("DATABASE_URL", f"sqlite+aiosqlite:///{database_path.resolve().as_posix()}")
@@ -91,7 +98,10 @@ async def test_agent_turn_sends_initial_outreach(db_session: AsyncSession) -> No
             {
                 "name": "send_email",
                 "subject": "Quick contract role",
-                "body": "Saw your portfolio and thought you'd be a strong fit for a short sprint. Open to a quick call this week?",
+                "body": (
+                    "Saw your portfolio and thought you'd be a strong fit for a short sprint. "
+                    "Open to a quick call this week?"
+                ),
             }
         ),
         email_sender=sender,
@@ -138,7 +148,10 @@ async def test_agent_turn_negotiates_after_budget_pushback(db_session: AsyncSess
             {
                 "name": "send_email",
                 "subject": "Re: Quick contract role",
-                "body": "We can get close to that range for the right fit. If you're open, I'd love to outline the scope and see if it feels aligned.",
+                "body": (
+                    "We can get close to that range for the right fit. "
+                    "If you're open, I'd love to outline the scope and see if it feels aligned."
+                ),
             }
         ),
         email_sender=sender,
@@ -182,7 +195,10 @@ async def test_agent_turn_proposes_slots_and_confirms_booking(db_session: AsyncS
         llm_response_override=json.dumps(
             {
                 "name": "propose_calendar_slot",
-                "body": "Great. I can do Tuesday 10:00, Tuesday 14:00, or Wednesday 11:00 if one of those works for you.",
+                "body": (
+                    "Great. I can do Tuesday 10:00, Tuesday 14:00, "
+                    "or Wednesday 11:00 if one of those works for you."
+                ),
                 "slots": [
                     "2026-05-05T10:00:00+05:30",
                     "2026-05-05T14:00:00+05:30",
@@ -252,7 +268,10 @@ async def test_agent_turn_walks_away_when_budget_is_out_of_range(db_session: Asy
         llm_response_override=json.dumps(
             {
                 "name": "walk_away",
-                "body": "Appreciate the clarity. I don't want to waste your time if the budget isn't a fit, but I'd be glad to keep you in mind for future roles.",
+                "body": (
+                    "Appreciate the clarity. I don't want to waste your time if the budget "
+                    "isn't a fit, but I'd be glad to keep you in mind for future roles."
+                ),
             }
         ),
         email_sender=sender,

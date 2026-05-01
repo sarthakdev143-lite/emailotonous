@@ -24,9 +24,13 @@ async def trigger_agent(thread_id: str, session: SessionDependency) -> ThreadDet
     try:
         return await run_agent_turn(session, thread_id=thread_id)
     except LLMUnavailableError as error:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)
+        ) from error
     except EmailDeliveryError as error:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)
+        ) from error
 
 
 @router.post("/process-puter", response_model=ThreadDetail)
@@ -39,4 +43,6 @@ async def process_puter(payload: PuterProcessRequest, session: SessionDependency
             llm_response_override=payload.llm_response,
         )
     except EmailDeliveryError as error:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)
+        ) from error
