@@ -1,0 +1,17 @@
+aiosqlite==0.21.0
+alembic==1.16.1
+apscheduler==3.11.0
+black==25.1.0
+email-validator==2.2.0
+fastapi==0.115.12
+groq==0.25.0
+httpx==0.28.1
+openai==1.79.0
+pydantic-settings==2.9.1
+pytest==8.3.5
+pytest-asyncio==0.26.0
+python-dotenv==1.1.0
+resend==2.8.0
+ruff==0.11.9
+sqlalchemy[asyncio]==2.0.40
+uvicorn[standard]==0.34.2
