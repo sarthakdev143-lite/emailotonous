@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #1e2a28;
+  background-color: #f4efe8;
+}
+
+body {
+  @apply min-h-screen bg-shell bg-shell-gradient font-sans text-ink antialiased;
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+.soft-grid {
+  background-image:
+    linear-gradient(rgba(216, 207, 192, 0.32) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 207, 192, 0.32) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.panel-frame {
+  @apply rounded-[28px] border border-stroke bg-panel/95 shadow-panel backdrop-blur;
+}
+
+.section-title {
+  @apply font-serif text-[1.65rem] font-semibold tracking-[-0.03em] text-ink;
+}
